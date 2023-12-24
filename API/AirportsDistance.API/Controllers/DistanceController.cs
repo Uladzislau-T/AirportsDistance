@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using AirportsDistance.API.Filters;
+using AirportsDistance.API.Services;
 using AirportsDistance.Domain.Dto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,20 +10,31 @@ namespace AirportsDistance.API.Controllers
     [ApiController]
     public class DistanceController : ControllerBase
     {
-        // // GET api/values
-        // [HttpGet]
-        // public ActionResult<IEnumerable<string>> Get()
-        // {
-        //     return new string[] { "value1", "value2" };
-        // }
+        private readonly IDistanceService _distanceService;
 
-        // POST api/distance
-        [HttpPost]
-        public async Task<IActionResult> GetDistance([FromBody] DistanceRequestDto dto)
+        public DistanceController(IDistanceService distanceService)
         {
-
-            return Ok(dto);
+            _distanceService = distanceService;
         }
+
+
+        // GET api/distance
+        [HttpGet]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> GetDistance([FromQuery] DistanceRequestDto dto)
+        {
+            var result = await _distanceService.GetDistanceAsync(dto);
+
+            return Ok(result);
+        }
+
+        // // POST api/distance
+        // [HttpPost]
+        // public async Task<IActionResult> Create([FromBody] DistanceRequestDto dto)
+        // {
+
+        //     return Created(result);
+        // }
 
         // // PUT api/values/5
         // [HttpPut("{id}")]
