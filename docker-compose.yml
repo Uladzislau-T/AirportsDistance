@@ -1,0 +1,20 @@
+﻿version: '3.8' 
+
+services: 
+
+  redis-data:
+    image: redis:alpine 
+
+  api:
+    image: ${REGISTRY:-airportsdistance}/airportsdistance.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: API/AirportsDistance.API/Dockerfile
+    depends_on:
+      - redis-data
+
+  ui:
+    build: ./Client
+    
+
+

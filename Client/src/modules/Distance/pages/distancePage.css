@@ -1,0 +1,8 @@
+.distancePage-form-select{
+  max-width: 45%;
+}
+
+.distancePage-form-container{
+  display: flex;
+  flex-direction: row;
+}

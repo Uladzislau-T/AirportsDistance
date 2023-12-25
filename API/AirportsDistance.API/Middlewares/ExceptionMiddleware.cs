@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AirportsDistance.API.Exceptions;
@@ -44,11 +45,14 @@ namespace AirportsDistance.API.Middlewares
       //   AccessViolationException => "",
       //   _ => ""
       // };
+
+      var message = new List<string>();
+      message.Add(exception.Message);
       
       await context.Response.WriteAsync(new ErrorDetails()
       {
-        StatusCode = (int)statusCode,
-        Message = exception.Message
+        StatusCode = statusCode.ToString(),
+        Errors = message
       }.ToString());
     }
   }

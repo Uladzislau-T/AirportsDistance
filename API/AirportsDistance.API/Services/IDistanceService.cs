@@ -5,6 +5,6 @@ namespace AirportsDistance.API.Services
 {
   public interface IDistanceService
   {
-    Task<int> GetDistanceAsync(DistanceRequestDto dto);    
+    Task<DistanceResponseDto> GetDistanceAsync(DistanceRequestDto dto);    
   }
 }

@@ -3,39 +3,60 @@ using System.Threading.Tasks;
 using AirportsDistance.API.Connections.Http.Clients;
 using AirportsDistance.Domain.Dto;
 using AirportsDistance.Domain.Enums;
+using AirportsDistance.Infrasturcture.Contracts;
 
 namespace AirportsDistance.API.Services
 {
   class DistanceService : IDistanceService
   {
     private readonly PlacesDevCteleportHttpClient _PDCteleportClient;
+    private readonly IAirportRepository _repository;
 
-    public DistanceService(PlacesDevCteleportHttpClient PDCteleportClient)
+    public DistanceService(PlacesDevCteleportHttpClient PDCteleportClient, IAirportRepository repository)
     {
       _PDCteleportClient = PDCteleportClient;
+      _repository = repository;
     }
-    public async Task<int> GetDistanceAsync(DistanceRequestDto dto)
+    public async Task<DistanceResponseDto> GetDistanceAsync(DistanceRequestDto dto)
     {      
-      var airportFirst = await _PDCteleportClient.GetAirportByIataAsync(dto.Iata1);
+      var airportFirst = await _repository.GetAirportAsync(dto.Iata1.ToUpper());
 
-      var airportSecond = await _PDCteleportClient.GetAirportByIataAsync(dto.Iata2);  
+      if(airportFirst == null)
+      {
+        airportFirst = await _PDCteleportClient.GetAirportByIataAsync(dto.Iata1.ToUpper());
+        await _repository.UpdateAirportAsync(airportFirst);
+      }
 
-      var resultRaw = CalculateDistance(
+      var airportSecond = await _repository.GetAirportAsync(dto.Iata2.ToUpper());
+
+      if(airportSecond == null)
+      {
+        airportSecond = await _PDCteleportClient.GetAirportByIataAsync(dto.Iata2.ToUpper());  
+        await _repository.UpdateAirportAsync(airportSecond);
+      }
+
+      var distanceRaw = CalculateDistance(
         airportFirst.Location.Lat, 
         airportFirst.Location.Lon, 
         airportSecond.Location.Lat, 
         airportSecond.Location.Lon
       );    
 
-      // var result = dto.Units switch
-      // {        
-      //   DistanceUnitsEnum.Miles => Math.Round(resultRaw * 0.00062137),
-      //   DistanceUnitsEnum.Kilometres => Math.Round(resultRaw / 1000),        
-      //   _ => Math.Round(resultRaw)
-      // };
+      var distance = dto.Units switch
+      {        
+        DistanceUnitsEnum.Miles => Math.Round(distanceRaw * 0.00062137),
+        DistanceUnitsEnum.Kilometres => Math.Round(distanceRaw / 1000),        
+        _ => Math.Round(distanceRaw)
+      };      
 
-      // return (int)result;
-      return 0;
+      var result = new DistanceResponseDto() {
+        AirportFirst = airportFirst.Name,
+        AirportSecond = airportSecond.Name,
+        Distance = (int)distance,
+        Units = dto.Units.ToString()
+      };
+
+      return result;
     }
 
 

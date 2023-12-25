@@ -1,0 +1,20 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;  
+}
+body a {
+      color: grey;
+      text-decoration: none;
+}
+
+body button{
+  outline: none;
+}
+
+.App{
+}
+
+ul {
+  list-style-type: none;
+}

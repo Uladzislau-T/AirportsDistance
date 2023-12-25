@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <!-- <LangVersion>preview</LangVersion> -->
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AirportsDistance.Domain\AirportsDistance.Domain.csproj" />    
+    <ProjectReference Include="..\AirportsDistance.Infrasturcture\AirportsDistance.Infrasturcture.csproj" />    
   </ItemGroup>
 
 </Project>

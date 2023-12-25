@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AirportsDistance.API.Extensions;
 using AirportsDistance.API.Middlewares;
 using AirportsDistance.API.Services;
+using AirportsDistance.Infrasturcture.Contracts;
+using AirportsDistance.Infrasturcture.RedisRepositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,9 +31,12 @@ namespace AirportsDistance.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.ConfigureCors();
             services.ConfigureHttpClients();
             services.ConfigureActionFilters();
+            services.AddRedis(Configuration);
             services.AddScoped<IDistanceService, DistanceService>();
+            services.AddScoped<IAirportRepository, RedisAirportRepository>();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -50,6 +55,8 @@ namespace AirportsDistance.API
             {
                 app.UseHsts();
             }
+
+            app.UseCors("CorsPolicy");
 
             app.UseMiddleware<ExceptionMiddleware>();
 

@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Linq;
+using AirportsDistance.Domain.ErrorModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -9,15 +11,16 @@ namespace AirportsDistance.API.Filters
     public void OnActionExecuting(ActionExecutingContext context)
     {
       if (!context.ModelState.IsValid)
-      {
-        // context.Result = new UnprocessableEntityObjectResult(context.ModelState);
-        string messages = string.Join("; ",context.ModelState.Values
+      {        
+        var messages = new List<string>();
+
+        messages.AddRange(context.ModelState.Values
                      .SelectMany(x => x.Errors)
-                     .Select(x => !string.IsNullOrWhiteSpace(x.ErrorMessage) ? x.ErrorMessage : x.Exception.Message.ToString()));
+                     .Select(x => !string.IsNullOrWhiteSpace(x.ErrorMessage) ? x.ErrorMessage : x.Exception.Message)); 
         
-        var responseObj = new
+        var responseObj = new ErrorDetails()
         {
-            Message = "Bad Request",
+            StatusCode = "Bad Request",
             Errors = messages                    
         };
 
