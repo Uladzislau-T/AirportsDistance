@@ -15,9 +15,11 @@ interface DistanceFormValues {
   units: string; 
 }
 
+const regExp = /^[A-Z]{3}$/
+
 const validationSchema = yup.object({  
-  iata1: yup.string().min(3).max(3).uppercase().required(),  
-  iata2: yup.string().min(3).max(3).uppercase().required(),
+  iata1: yup.string().min(3).max(3).uppercase().required().matches(regExp, "Iata code must contain only 3 uppercase letters of latin alphabet"),  
+  iata2: yup.string().min(3).max(3).uppercase().required().matches(regExp, "Iata code must contain only 3 uppercase letters of latin alphabet"),
   units: yup.string().required(), 
 });
 
